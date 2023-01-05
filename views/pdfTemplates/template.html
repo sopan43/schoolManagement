@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pdf Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td align="left" valign="top" bgcolor="#ffe77b" style="background-color:#fff;">
+              <img height="100" width="100" src="https://sdm-school-morena.herokuapp.com/images/mono-110x87.png" alt="">
+            </td>
+            <td align="center" bgcolor="#ffe77b" style="background-color: #fff;">
+              <h2 style="font-weight: 900;color: brown;">S.D.M. Public High School</h2>
+              <p>M.S. Road Morena <br/></p>
+            </td>
+        </tr>
+    </table> 
+    <h1 align="center" style="font-size: 30px;font-weight: 600; color: green; margin-top: 10px;">Admision Details</h1>
+    <table class="table table-borderless">
+        <tbody>
+            <tr>
+                <th scope="row">RegistrationNo:</th>
+                <td>{{student.RegistrationNo}}</td>
+              </tr>
+          <tr>
+            <th scope="row">Name:</th>
+            <td>{{student.StudentName.FirstName}} {{student.StudentName.LastName}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Gender:</th>
+            <td>{{student.Gender}}</td>
+            <th scope="row">Date Of Birth:</th>
+            <td>{{student.DateOfBirth}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Father's Name:</th>
+            <td>{{student.FathersName}}</td>
+            <th scope="row">Father's Occupation:</th>
+            <td>{{student.FathersOccupation}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Mother's Name:</th>
+            <td>{{student.MothersName}}</td>
+            <th scope="row">Mother's Occupation:</th>
+            <td>{{student.MothersOccupation}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Address:</th>
+            <td>{{student.Address.Address_Line_1}} {{student.Address.Address_Line_2}}</td>
+          </tr>
+          <tr>
+            <th scope="row">PostalCode:</th>
+            <td>{{student.Address.PostalCode}}</td>
+            <th scope="row">City:</th>
+            <td>{{student.Address.City}}</td>
+          </tr>
+          <tr>
+            <th scope="row">State:</th>
+            <td>{{student.Address.State}}</td>
+            <th scope="row">Country:</th>
+            <td>{{student.Address.Country}}</td>
+          </tr>
+        </tbody>
+      </table>
+</body>
+</html>

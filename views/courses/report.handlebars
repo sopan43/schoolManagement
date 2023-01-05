@@ -1,0 +1,101 @@
+<div class="container-fluid" id="container-fluid">
+    <h1>{{type}} - {{course.displayName}}</h1>
+    {{#if students}}
+
+    <div class="row">
+        <div class="col-6">
+            <form class="form-add-student needs-validations" action="/courses/report?subject={{subject}}&id={{course._id}}&type={{type}}" method="POST" style="z-index:1;"
+                novalidate>
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">{{subject}}</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each students}}
+                        <tr>
+                            <td>{{@key}}: {{this.StudentName.FirstName}} {{this.StudentName.LastName}}</td>
+                            <td><input type="text" name="marks" class="form-control" value="{{marks}}"
+                                    required autocomplete="off"></td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-default btn-block btn-lg">Save Details &nbsp;
+                    <i class="fa fa-paper-plane fa-lg"></i> </button>
+            </form>
+        </div>
+    </div>
+
+{{#unless user.privileges.update}}
+<script>
+    let updateItems = document.getElementsByClassName('edit-item'), count;
+
+    for (count = 0; count < updateItems.length; count++) {
+        updateItems[count].style.display = 'none';
+    }
+</script>
+{{/unless}}
+
+{{#unless user.privileges.delete}}
+<script>
+    let items = document.getElementsByClassName("del-item"), i;
+
+    for (i = 0; i < items.length; i++) {
+        items[i].style.display = 'none';
+    }
+</script>
+{{/unless}}
+
+<br>
+
+<ul class="pagination">
+    {{#paginate current=current pages=pages}} {{/paginate}}
+</ul>
+{{else}}
+<p>No records found...</p>
+{{/if}}
+</div>
+
+<div class="modal fade" id="importCSV" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Import From CSV.</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="/uploads/import-csv" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="custom-file">
+                                <input type="file" name="importcsv" class="custom-file-input" id="inputGroupFile02">
+                                <label class="custom-file-label" for="inputGroupFile02">Choose
+                                    file</label>
+                            </div>
+                            <small id="fileHelp" class="form-text text-muted">This is some
+                                placeholder block-level help
+                                text for the above input. It's a bit lighter and easily wraps
+                                to a new line.
+                            </small>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="imgCaption" class="form-control" placeholder="Enter a caption...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
