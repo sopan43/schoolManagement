@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pdf Document</title>
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
+    <table class="table table-sm" width="75%" hight="75%" border="0" style="margin: 0;" cellspacing="0" cellpadding="0">
+      <tbody style="font-size: .5rem;">
+      
+      <tr>
+        <td align="left" valign="top" bgcolor="#ffe77b" style="background-color:#fff;">
+          <p>Dise Code. 23020318180</p>
+        </td>
+        <td align="center" bgcolor="#ffe77b" style="background-color: #fff;">
+          <p><b>Govt. Recognized</b></p>
+        </td>
+        <td align="center" bgcolor="#ffe77b" style="background-color: #fff;">
+          <p> <b>Reco. No..........</b></p>
+        </td>
+    </tr>
+      
+      
+      
+      <tr>
+            <td align="left" valign="top" bgcolor="#ffe77b" style="background-color:#fff;">
+              <img height="50" width="50" src="https://sdm-school-morena.herokuapp.com/images/mono-110x87.png" alt="">
+            </td>
+            <td align="center" bgcolor="#ffe77b" style="background-color: #fff;">
+              <h6 style="font-weight: 900;color: brown; margin: 0;">S.D.M. Public High School</h6>
+              <p style="margin: 0;">M.S. Road Morena <br/></p>
+            </td>
+            <td align="center" bgcolor="#ffe77b" style="background-color: #fff;">
+              <p>          </p>
+            </td>
+        </tr>
+    </tbody>
+      </table> 
+
+    <div align="center">
+      <h7 style="color: green; margin: 0;">School Leaving Certificate</h7>
+    </div>
+    <table class="table ">
+        <tbody style="font-size: .5rem;">
+            <tr>
+                <th scope="row" style="padding: 4px;">SSSMID:</th>
+                <td style="padding: 4px;">{{student.SSSID}}</td>
+              </tr>
+          <tr>
+            <th scope="row" style="padding: 4px;">Name:</th>
+            <td style="padding: 4px;">{{student.StudentName.FirstName}} {{student.StudentName.LastName}}</td>
+          </tr>
+          <tr>
+            <th scope="row" style="padding: 4px;">Father's Name:</th>
+            <td style="padding: 4px;">{{student.FathersName}}</td>
+          </tr>
+          <tr>
+            <th scope="row" style="padding: 4px;">Mother's Name:</th>
+            <td style="padding: 4px;">{{student.MothersName}}</td>
+          </tr>
+          <tr>
+            <th scope="row" style="padding: 4px;">Date of Birth</th>
+            <td style="padding: 4px;">{{student.DateOfBirth}}</td>
+          </tr>
+          <tr>
+            <th scope="row" style="padding: 4px;">Cast:</th>
+            <td style="padding: 4px;">{{student.Category}}</td>
+          </tr>
+          <tr>
+            <th scope="row" style="padding: 4px;">Admission No & Date:</th>
+            <td>87989, {{student.DateOfAdmission}}</td>
+          </tr>
+          <tr>
+            <th scope="row" style="padding: 4px;">Class In which Admitted:</th>
+            <td style="padding: 4px;">{{student.Class}}</td>
+            <th scope="row" style="padding: 4px;">Class In Which Leaving:</th>
+            <td style="padding: 4px;">{{student.CurrentClass}} {{student.RelievingDetails.Status}}</td>
+          </tr>
+          <tr>
+            <th scope="row" style="padding: 4px;">Date of Leaving School:</th>
+            <td>{{student.RelievingDetails.DateOfRelieving}}</td>
+          </tr>
+          <tr>
+            <th scope="row" style="padding: 4px;">Reason</th>
+            <td>{{student.RelievingDetails.RelievingReason}}</td>
+          </tr>
+        </tbody>
+      </table>
+</body>
+</html>

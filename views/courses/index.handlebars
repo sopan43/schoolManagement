@@ -1,0 +1,74 @@
+<div class="container-fluid" id="container-fluid">
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="row">
+                {{#if course}}
+
+                {{#each course}}
+                <div class="col-md-3">
+                    <div class="card text-center" style="border-radius:0px;background:red;color:#fff;">
+                        <div class="card-body">
+                            <div class="media">
+                                <i class="fa fa-graduation-cap fa-4x"></i>
+                                <div class="media-body">
+                                     <h5 class="mt-0">{{displayName}}</h5>
+                                    {{!-- <h3>800</h3> --}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="/courses/edit?id={{_id}}">Know more &nbsp;
+                                <span class="fa fa-chevron-right"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <ul class="pagination">
+        {{#paginate current=current pages=pages}} {{/paginate}}
+    </ul>
+
+    {{#unless user.privileges.update}}
+    <script>
+        let updateItems = document.getElementsByClassName('edit-item'), count;
+        let hideItems = document.getElementsByClassName('hide-element'), x;
+
+        for (count = 0; count < updateItems.length; count++) {
+            updateItems[count].style.display = 'none';
+        }
+
+        for (x = 0; x < hideItems.length; x++) {
+            hideItems[x].style.display = 'none';
+        }
+
+        document.getElementById('hide-item').style.display = 'none';
+    </script>
+    {{/unless}}
+
+    {{#unless user.privileges.delete}}
+    <script>
+        let items = document.getElementsByClassName("del-item"), i;
+
+        for (i = 0; i < items.length; i++) {
+            items[i].style.display = 'none';
+        }
+    </script>
+    {{/unless}}
+
+
+</div>
+
+{{!-- <a href="#exampleModalCenter" class="float-search" data-toggle="modal">
+    <i class="fa fa-search my-float"></i>
+</a>
+
+<a href="/courses/add" class="float">
+    <i class="fa fa-plus my-float"></i>
+</a> --}}
