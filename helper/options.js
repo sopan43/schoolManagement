@@ -2,11 +2,11 @@ module.exports = {
     formate: 'A4',
     orientation: 'portrait',
     border: '12mm',
-    // childProcessOptions: {
-    //     env: {
-    //       OPENSSL_CONF: '/dev/null',
-    //     },
-    //   }
+    childProcessOptions: {
+        env: {
+          OPENSSL_CONF: '/dev/null',
+        },
+      }
     // header: {
     //     height: '15mm',
     //     contents: '<h4 style=" color: red;font-size:20;font-weight:800;text-align:center;">S.D.M. Public High School</h4>'
