@@ -2,6 +2,7 @@ module.exports = {
     formate: 'A4',
     orientation: 'portrait',
     border: '12mm',
+    timeout: '100000',
     childProcessOptions: {
         env: {
           OPENSSL_CONF: '/dev/null',
