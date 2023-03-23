@@ -20,6 +20,7 @@
     "express-zip": "^3.0.0",
     "faker": "^4.1.0",
     "fs": "^0.0.2",
+    "html-pdf": "^3.0.1",
     "html-to-pdfmake": "^2.3.11",
     "joi": "^13.4.0",
     "method-override": "^2.3.10",
