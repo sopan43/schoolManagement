@@ -15,6 +15,7 @@ const {
   updateAccessControl,
   deleteAccessControl
 } = require('../helpers/auth')
+const { allow } = require('joi/lib/types/lazy')
 
 router.get(
   '/',
@@ -343,18 +344,16 @@ router.get(
     const course2 = [] 
     for(let i=0;i<course.subjects.length;i++){
       if(course.subjects[i].examDate === undefined || course.subjects[i].examDate.trim() === "" || course.subjects[i].examDate === "Invalid date"){
-        console.log("-----------");
       }else{
         course2.push(course.subjects[i])
       }
       
     }
     course.subjects = course2
-    console.log("====== ", course);
     const x = await print.printAdmitCard(student, course)
     let downloadArr = []
     x.forEach(file => {
-      const filePath = file.filename.split('/')
+      const filePath = file.filename.split('\/')
       const fileName = filePath.pop()
       downloadArr.push({ path: file.filename, name: fileName })
     })
@@ -442,6 +441,140 @@ router.get(
     res.zip(downloadArr, 'marksheets.zip')
   }
 )
+
+
+router.get(
+  '/reportcardFinal',
+  [ensureAuthenticated, isAdmin, deleteAccessControl],
+  async (req, res) => {
+    const course = await Course.findOne({
+      _id: req.query.id
+    }).lean()
+    const students = await Student.find({
+      CurrentClass: course.displayName,
+      TC: false
+    }).lean()
+
+    let nSubLen
+    const numberSubs =   getAllNumberSubs(course.subjects)
+    console.log('numberSubs   ',numberSubs);
+    for (let i = 0; i <  students.length; i++) {
+      let findAcademicDetailsIndexes = students[i].academicDetails.map(
+        el =>
+          el.class === course.displayName ? el : ''
+      ).filter(String)
+
+     
+
+      
+      // students[i].subjects =
+      //   students[i].academicDetails[findAcademicDetailsIndexes[0]].subjects
+      // delete students[i].academicDetails
+
+   
+
+      // students[i].subjects.forEach(subject => {
+      //   const sub = course.subjects.find(el => el.name === subject.name)
+      //   subject.maxMarks = sub.maxMarks
+      //   subject.passingMarks = sub.passingMarks
+      //   subject.markingType = sub.markingType
+      // })
+      // let gSubs = []
+      let {finalArr:nSubs, totalMarksObtained, grandTotalMaxMarks} = getFinalResult(findAcademicDetailsIndexes, numberSubs )
+console.log(nSubs, totalMarksObtained, grandTotalMaxMarks);
+      // let totalMarksObtained = 0
+      // let totalMaxMarks = 0
+      // students[i].result = 'PASS'
+      // students[i].subjects.forEach(subject => {
+      //   if (subject.markingType === 'Grade') gSubs.push(subject)
+      //   if (subject.markingType === 'Number') nSubs.push(subject)
+      // })
+
+      // nSubs.forEach(sub => {
+      //   if (!isNaN(sub.marks)) totalMarksObtained += +sub.marks
+      //   if (isNaN(sub.marks) || +sub.marks < sub.passingMarks)
+      //     students[i].result = 'FAIL'
+      //   totalMaxMarks += sub.maxMarks
+      // })
+
+      // students[i].gSubs = gSubs
+      students[i].nSubs = nSubs
+      students[i].totalMaxMarks = grandTotalMaxMarks
+      students[i].totalMarksObtained = totalMarksObtained
+      students[i].totalMarksObtainedWord = converter.toWords(totalMarksObtained)
+      students[i].percentage = (
+        (totalMarksObtained / grandTotalMaxMarks) *
+        100
+      ).toFixed(2)
+      nSubLen = nSubs.length > 6 ? nSubs.length : 6
+      // gSubLen = gSubs.length === 0 ? 0 : gSubs.length + 5
+      // delete students[i].subjects
+    }
+    let dummyLenArr = []
+    for (let i = 0; i < 10 - nSubLen; i++) {
+      dummyLenArr.push(i)
+    }
+
+
+
+
+    const x = await print.printMarkSheet(
+      students,
+      course,
+      dummyLenArr,
+      req.query.type
+    )
+    let downloadArr = []
+    x.forEach(file => {
+      const filePath = file.filename.split('/')
+      const fileName = filePath.pop()
+      downloadArr.push({ path: file.filename, name: fileName })
+    })
+    res.zip(downloadArr, 'marksheets.zip')
+
+    // res.send();
+
+  }
+)
+
+function getAllNumberSubs(subjects){
+  let numberSubs = [];
+  subjects.forEach(el => {
+    if(el.markingType === 'Number'){
+      numberSubs.push(el.name)
+    }
+  })
+  return numberSubs
+}
+
+function getFinalResult(academicDetailsForCurrentClass, numberSubs) {
+  let allSubsArr = [];
+  let finalArr = [];
+  academicDetailsForCurrentClass.forEach(el => {
+ 
+   allSubsArr.push(...el.subjects)
+  })
+  
+  const filterArr = allSubsArr.filter(el =>  numberSubs.indexOf(el.name) !== -1 ? 1: 0 )
+  let totalMarksObtained = 0
+  let grandTotalMaxMarks = 0
+  numberSubs.forEach(sub => {
+    let allOccSub = filterArr.map( el => el.name === sub ? el : '').filter(String)
+    let totalMarks = 0
+    let totalMaxMarks = 0
+    let totalPassingMarks = 0
+    allOccSub.forEach(el => {
+      if (!isNaN(el.marks))  totalMarks += +el.marks
+      totalMaxMarks += +el.maxMarks
+      totalPassingMarks += +el.passingMarks
+    })
+    totalMarksObtained += totalMarks
+    grandTotalMaxMarks += totalMaxMarks
+    finalArr.push({name: sub, marks: totalMarks,maxMarks:totalMaxMarks , passingMarks:totalPassingMarks})
+  })
+return {finalArr, totalMarksObtained, grandTotalMaxMarks};
+}
+
 
 // GET Courses AJAX
 router.get('/getCourses', (req, res) => {

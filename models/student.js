@@ -199,9 +199,9 @@ function validateStudent (student) {
     RegistrationNo1: Joi.string()
       .allow('')
       .allow(null),
-    TCNumber: Joi.string()
-      .allow('')
-      .allow(null),
+    // TCNumber: Joi.string()
+    //   .allow('')
+    //   .allow(null),
     Status: Joi.string()
       .allow('')
       .allow(null),
@@ -211,9 +211,9 @@ function validateStudent (student) {
     TCDate: Joi.string()
       .allow('')
       .allow(null),
-    RelievingReason: Joi.string()
-      .allow('')
-      .allow(null),
+    // RelievingReason: Joi.string()
+    //   .allow('')
+    //   .allow(null),
     FirstName: Joi.string()
       .alphanum()
       .regex(/[a-zA-Z]/)
@@ -252,11 +252,11 @@ function validateStudent (student) {
 
 function validateTC (student) {
   const schema = {
-    TCNumber: Joi.string().required(),
+    // TCNumber: Joi.string().required(),
     Status: Joi.string().required(),
     DateOfRelieving: Joi.string().required(),
     TCDate: Joi.string().required(),
-    RelievingReason: Joi.string().required(),
+    // RelievingReason: Joi.string().required(),
     _method: Joi.string().empty('')
   }
 

@@ -366,7 +366,10 @@ router.post(
       req.flash('error_msg', error.details[0].message)
       res.redirect(`/students/tc?id=${req.params.id}`)
     } else {
+      console.log(req.body);
       const id = req.params.id
+      req.body.DateOfRelieving = moment(req.body.DateOfRelieving).format("DD/MM/YYYY")
+      req.body.TCDate = moment(req.body.TCDate).format("DD/MM/YYYY")
       const result = await Student.findOneAndUpdate(
         { _id: req.params.id },
         { RelievingDetails: req.body, TC: true }

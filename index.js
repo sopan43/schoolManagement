@@ -16,7 +16,7 @@ const app = express();
 const students = require('./routes/students');
 const users = require('./routes/users');
 const courses = require('./routes/courses');
-const extras = require('./routes/extras');
+const miscellaneous = require('./routes/miscellaneous');
 const api = require('./routes/api');
 const uploads = require('./routes/uploads');
 
@@ -26,7 +26,9 @@ require('./config/passport')(passport);
 // Connecting to MongoDB...
 const mongoose = require('mongoose');
 
-const url = `mongodb://sopanmittal43atlas:sopan@ac-7mqzik7-shard-00-00.wnzl4kq.mongodb.net:27017,ac-7mqzik7-shard-00-01.wnzl4kq.mongodb.net:27017,ac-7mqzik7-shard-00-02.wnzl4kq.mongodb.net:27017/sdmschool?ssl=true&replicaSet=atlas-vpq55e-shard-0&authSource=admin&retryWrites=true&w=majority`;
+const url = `mongodb://sopan:sopan@school-shard-00-00.jyw4b.mongodb.net:27017,school-shard-00-01.jyw4b.mongodb.net:27017,school-shard-00-02.jyw4b.mongodb.net:27017/sdmschool?ssl=true&replicaSet=atlas-w3e74l-shard-0&authSource=admin&retryWrites=true&w=majority`;
+
+// const url = `mongodb://sopanmittal43atlas:sopan@ac-7mqzik7-shard-00-00.wnzl4kq.mongodb.net:27017,ac-7mqzik7-shard-00-01.wnzl4kq.mongodb.net:27017,ac-7mqzik7-shard-00-02.wnzl4kq.mongodb.net:27017/sdmschool?ssl=true&replicaSet=atlas-vpq55e-shard-0&authSource=admin&retryWrites=true&w=majority`;
 
 const connectionParams={
     useNewUrlParser: true,
@@ -147,7 +149,7 @@ app.get('/errors', (req, res) => {
 app.use('/students', students);
 app.use('/users', users);
 app.use('/courses', courses);
-app.use('/extras', extras);
+app.use('/miscellaneous', miscellaneous);
 app.use('/api', api);
 app.use('/uploads', uploads);
 

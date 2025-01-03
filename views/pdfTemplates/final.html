@@ -16,11 +16,11 @@
             <tr>
                 <td align="left" valign="top" bgcolor="#ffe77b" style="background-color:#fff;">
                     <img height="75" width="75" src="https://res.cloudinary.com/tsp/image/upload/v1664338574/sampleImage.png"
-                    alt="">
+                        alt="">
                 </td>
                 <td bgcolor="#ffe77b" style="background-color: #fff; text-align:left">
-                    <h1 style="font-weight: 900; margin-left: 60px; font-size: 25px;">S.D.M. Public High School</h1>
-                    <h6 style="margin-left: 60px;">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspM.S. Road Morena <br /></h6>
+                    <h1 style="font-weight: 900; margin-left: 65px; ">S.D.M. Public High School</h1>
+                    <h6 style="margin-left: 65px;">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspM.S. Road Morena <br /></h6>
                 </td>
             </tr>
             <tr>
@@ -60,7 +60,7 @@
     </table>
 
     <table class="table table-bordered" style="border-color:black;">
-        <tbody style="font-size: .75rem;">
+        <tbody style="font-size: .95rem;">
             <tr>
                 <th scope="row" style="padding: 4px; width: 34.3%">Subjects</th>
                 <th scope="row" style="padding: 4px; width: 11.5%">Max. Marks</th>
@@ -71,29 +71,30 @@
             </tr>
             <tr>
                 <td style="padding: 4px;">
-                    <p style=" margin: 0px; line-height: 200%;"> <b>{{#each nSubs}}
+                    <p style=" margin: 0px; line-height: 250%;"> <b>{{#each nSubs}}
                         {{this.name}}<br>
                         {{/each}}</b></p>
                 </td>
                 <td style="padding: 4px;">
-                    <p style=" margin: 0px; line-height: 200%;"><b>{{#each nSubs}}
+                    <p style=" margin: 0px; line-height: 250%;"><b>{{#each nSubs}}
                         {{this.maxMarks}}<br>
                         {{/each}}</b></p>
                 </td>
                 <td style="padding: 4px;">
-                    <p style=" margin: 0px; line-height: 200%;"><b>{{#each nSubs}}
+                    <p style=" margin: 0px; line-height: 250%;"><b>{{#each nSubs}}
                         {{this.passingMarks}}<br>
                         {{/each}}</b></p>
                 </td>
                 <td style="padding: 4px;">
-                    <p style=" margin: 0px; line-height: 200%;">{{#each nSubs}}
+                    <p style=" margin: 0px; line-height: 250%;">{{#each nSubs}}
                         {{this.marks}}<br>
                         {{/each}}</p>
                 </td>
                 <td style="padding: 4px;">
-                    <p style=" margin: 0px; line-height: 200%;">
+                    <p style=" margin: 0px; line-height: 250%;">
                         Result <b>{{student.result}}</b><br>
                         {{#ifCond student.result "==" 'PASS'}}   Percentage <b>{{student.percentage}}%</b><br> {{/ifCond}}
+                        {{#ifCond examType "==" 'Final'}}   Percentage <b>{{student.percentage}}%</b><br> {{/ifCond}}
                         <br>
                         Position
                         <br>
@@ -119,12 +120,12 @@
             </tr>
             <tr>
                 <td style="padding: 4px;">
-                    <p style=" margin: 0px; line-height: 200%;"><b>{{#each student.gSubs}}
+                    <p style=" margin: 0px; line-height: 250%;"><b>{{#each student.gSubs}}
                         {{this.name}}<br>
                         {{/each}}</b></p>
                 </td>
                 <td colspan="4" style="padding: 4px;">
-                    <p style=" margin: 0px; line-height: 200%;">{{#each student.gSubs}}
+                    <p style=" margin: 0px; line-height: 250%;">{{#each student.gSubs}}
                         {{this.marks}}<br>
                         {{/each}}</p>
                 </td>

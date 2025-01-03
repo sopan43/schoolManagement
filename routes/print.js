@@ -102,7 +102,6 @@ module.exports = {
       pdf
         .create(document, options)
         .then(res => {
-          console.log('MITTAl   ', res)
           resolve(res)
         })
         .catch(error => {
@@ -124,12 +123,13 @@ module.exports = {
         }
         return 0;
       })
-      console.log(course)
+      
       students.forEach(async student => {
+        // console.log(student, '-----')
         const filePath = path.join(
           __dirname,
           'Admit-Card',
-          `${student.StudentName.FirstName}-Admit-Card`
+          `${student.AdmissionNumber}-${student.StudentName.FirstName}-Admit-Card`
         )
         const document = {
           html: admitcard,
@@ -144,7 +144,7 @@ module.exports = {
       })
       // }
       Promise.all(aa).then(values => {
-        console.log(values)
+        // console.log(values)
         resolve(values)
       })
     })
@@ -176,7 +176,7 @@ module.exports = {
       })
       // }
       Promise.all(aa).then(values => {
-        console.log(values)
+        // console.log(values)
         resolve(values)
       })
     })
