@@ -423,7 +423,7 @@ router.get(
       delete students[i].subjects
     }
     let dummyLenArr = []
-    for (let i = 0; i < 19 - nSubLen - gSubLen; i++) {
+    for (let i = 0; i < 22 - nSubLen - gSubLen; i++) {
       dummyLenArr.push(i)
     }
     const x = await print.printMarkSheet(

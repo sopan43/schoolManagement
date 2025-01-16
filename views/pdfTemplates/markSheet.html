@@ -12,32 +12,32 @@
 <body>
     <table class="table table-sm table-borderless" width="75%" hight="75%" border="0" style="margin: 0;" cellspacing="0"
         cellpadding="0">
-        <tbody style="font-size: .5rem;">
+        <tbody style="font-size: .75rem;">
             <tr>
                 <td align="left" valign="top" bgcolor="#ffe77b" style="background-color:#fff;">
-                    <img height="75" width="75" src="https://res.cloudinary.com/tsp/image/upload/v1664338574/sampleImage.png"
+                    <img height="100" width="100" src="https://res.cloudinary.com/tsp/image/upload/v1664338574/sampleImage.png"
                     alt="">
                 </td>
                 <td bgcolor="#ffe77b" style="background-color: #fff; text-align:left">
-                    <h1 style="font-weight: 900; margin-left: 60px; font-size: 25px;">S.D.M. Public High School</h1>
-                    <h6 style="margin-left: 60px;">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspM.S. Road Morena <br /></h6>
+                    <h1 style="font-weight: 900; margin-left: 125px; font-size: 40px;">S.D.M. Public High School</h1>
+                    <h6 style="margin-left: 250px;">M.S. Road Morena <br /></h6>
                 </td>
             </tr>
             <tr>
                 <th colspan="2" style="padding: 4px; text-align:center">
-                    <p style="font-size: 1rem;margin: 0;"><b>{{examType}} Examination 2022-2023</b></p>
+                    <p style="font-size: 1.25rem;margin: 0;"><b>{{examType}} Examination 2024-2025</b></p>
                 </th>
             </tr>
             <tr>
                 <th colspan="2" style="padding: 4px; text-align:center">
-                    <p style="font-size: 1rem;margin: 0;"><b>MARK-SHEET</b></p>
+                    <p style="font-size: 1.25rem;margin: 0;"><b>MARK-SHEET</b></p>
                 </th>
             </tr>
         </tbody>
     </table>
 
     <table class="table table-borderless">
-        <tbody style="font-size: .65rem;">
+        <tbody style="font-size: 1rem;">
             <tr>
                 <td scope="row" style="padding: 4px; text-align:left">
                     <p>
@@ -60,7 +60,7 @@
     </table>
 
     <table class="table table-bordered" style="border-color:black;">
-        <tbody style="font-size: .75rem;">
+        <tbody style="font-size:  1.1rem;">
             <tr>
                 <th scope="row" style="padding: 4px; width: 34.3%">Subjects</th>
                 <th scope="row" style="padding: 4px; width: 11.5%">Max. Marks</th>
@@ -135,15 +135,21 @@
                     {{#each dummyLenArr}}
                     <br>&nbsp
                     {{/each}}
-                    <p  style="font-size: 9px;"> <i>Class Teacher's Signature
-                            &nbsp&nbsp&nbsp&nbsp&nbsp
-                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                            Parent's Signature
-                            &nbsp&nbsp&nbsp&nbsp&nbsp
-                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                            Principal's Signature</i></p>
+                    <!-- <div style="width: 100%; display: flex; justify-content: space-between;">
+                        <span style="font-size: .75rem; text-align: left;"><i>Class Teacher's Signature</i></span>
+                        <span style="font-size: .75rem; text-align: center;"><i>Parent's Signature</i></span>
+                        <span style="font-size: .75rem; text-align: right;"><i>Principal's Signature</i></span>
+                    </div> -->
+
+                    <p  style="font-size: .9rem;"> <i>Class Teacher's Signature
+                        &nbsp&nbsp&nbsp&nbsp&nbsp
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                        Parent's Signature
+                        &nbsp&nbsp&nbsp&nbsp&nbsp
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                        Principal's Signature</i></p>
                 </th>
-            </tr>
+                </tr>
         </tbody>
     </table>
 </body>
