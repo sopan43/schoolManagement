@@ -4,114 +4,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pdf Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Admit Cards</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, Helvetica, sans-serif; color: #000; }
+        .page-break { page-break-after: always; }
+        .cut-line  { border-top: 2px dashed #555; }
+
+        /* ── Card: exactly half an A4 page (273mm / 2) ── */
+        .card-half {
+            height: 136mm;
+            padding: 3.5mm 5mm 2.5mm 5mm;
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        .hdr-tbl  { width: 100%; border-collapse: collapse; margin-bottom: 1.5mm; }
+        .hdr-logo { width: 74px; }
+        .hdr-logo img { width: 74px; height: 74px; }
+        .hdr-center { text-align: center; vertical-align: middle; }
+        .school-name { font-size: 22px; font-weight: 900; line-height: 1.15; }
+        .school-addr { font-size: 14px; margin-top: 2px; }
+        .hdr-spacer { width: 74px; }
+
+        /* ── Exam banner ── */
+        .banner-tbl {
+            width: 100%;
+            border-collapse: collapse;
+            border-top: 1.5px solid #000;
+            border-bottom: 1.5px solid #000;
+            margin-bottom: 1.5mm;
+        }
+        .banner-tbl td { padding: 2px 4px; vertical-align: middle; }
+        .banner-time  { font-size: 13px; white-space: nowrap; }
+        .banner-title { font-size: 16px; font-weight: bold; text-align: center; }
+        .banner-entry { font-size: 16px; font-weight: bold; text-align: right; white-space: nowrap; }
+
+        /* ── Class / Roll / DOB table ── */
+        .info-tbl { width: 100%; border-collapse: collapse; margin-bottom: 1.5mm; font-size: 15px; }
+        .info-tbl th, .info-tbl td { border: 1px solid #000; padding: 3px 6px; text-align: center; }
+
+        /* ── Content area: student | subjects | dates ──
+           height is set inline from server so it scales with subject count  */
+        .content-tbl {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #aaa;
+            margin-bottom: 1.5mm;
+        }
+        .col-student  { width: 36%; border-right: 1px solid #aaa; padding: 4px 7px; vertical-align: top; font-size: 15px; line-height: 1.6; }
+        /* col-subjects and col-dates get font-size / line-height via inline style (dynamic) */
+        .col-subjects { width: 32%; border-right: 1px solid #aaa; padding: 4px 7px; vertical-align: top; }
+        .col-dates    { width: 32%; padding: 4px 7px; vertical-align: top; }
+        .col-hdr { font-weight: bold; margin-bottom: 3px; }
+
+        /* ── Instructions ── */
+        .instructions { font-size: 13px; line-height: 1.3; margin-bottom: 1.5mm; }
+        .instructions div { margin: 0; }
+
+        /* ── Signature ── */
+        .sig-tbl { width: 100%; border-collapse: collapse; border-top: 1px solid #bbb; margin-top: 1mm; }
+        .sig-tbl td { padding-top: 4px; font-size: 14px; font-style: italic; }
+        .sig-right { text-align: right; }
+    </style>
 </head>
 
 <body>
-    <table class="table table-sm table-borderless" width="75%" hight="75%" border="0" style="margin: 0;" cellspacing="0"
-        cellpadding="0">
-        <tbody style="font-size: 1.25rem;">
-            <tr>
-                <td align="left" valign="top" bgcolor="#ffe77b" style="background-color:#fff;">
-                    <img height="75" width="75" src="https://res.cloudinary.com/tsp/image/upload/v1664338574/sampleImage.png"
-                    alt="">
-                </td>
-                <td  bgcolor="#ffe77b" style="background-color: #fff;">
-                    <h1 style="font-weight: 900; margin: 0;">S.D.M. Public High School</h6>
-                    <p style="margin: 0;">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspM.S. Road Morena <br /></p>
-                </td>
-                <td align="center" bgcolor="#ffe77b" style="background-color: #fff;">
-                    <p> </p>
-                </td>
-            </tr>
-            <tr>
-                <th style="line-height: 50%;">
-                    <!-- <p style="font-size: 1rem;margin: 0;"><b>Halfyearly Examination 2022-23 </b></p> -->
-                </th>
-                <th style="line-height: 50%;">
-                    <p style="font-size: 1.20rem;margin: 0;"><b>Annual  Examination 2025-26 </b></p>
-                </th>
-            </tr>
-            <tr>
-                <th>
-                    <p>Exam Time - 09:00 a.m - 11:30 a.m.</p>
-                </th>
-                <th>
-                    <p style="font-size: 1.20rem;margin: 0;"><b>ENTRY CARD </b></p>
-                </th>
-            </tr>
-        </tbody>
-    </table>
+{{#each pairs}}
+<div class="{{#unless isLast}}page-break{{/unless}}">
+    {{#each students}}
+    {{#if @index}}<div class="cut-line"></div>{{/if}}
+    <div class="card-half">
 
-    <table class="table table-bordered">
-        <tbody style="font-size: 1.25rem;">
+        <!-- ── HEADER ── -->
+        <table class="hdr-tbl" cellspacing="0" cellpadding="0">
             <tr>
-                <th scope="row" style="padding: 4px;">Class</th>
-                <th scope="row" style="padding: 4px;">Roll No.</th>
-                <th scope="row" style="padding: 4px;">Date of Birth:</th>
-
-            </tr>
-            <tr>
-                <td style="padding: 4px;">{{course.displayName}}</td>
-                <td style="padding: 4px;"></td>
-                <td style="padding: 4px;">{{student.DateOfBirth}}</td>
-            </tr>
-        </tbody>
-    </table>
-
-
-    <table class="table table-borderless">
-        <tbody style="font-size: 1.20rem;">
-            <tr>
-                <td scope="row" style="padding: 4px;">
-                    <p>
-                        <b>Student name</b> : {{student.StudentName.FirstName}} {{student.StudentName.LastName}}<br>
-                        <b>Father's Name</b> : {{student.FathersName}}<br>
-                        <b>Mother's Name</b> : {{student.MothersName}}
-                    </p>
+                <td class="hdr-logo" valign="middle">
+                    <img src="https://res.cloudinary.com/tsp/image/upload/v1664338574/sampleImage.png" alt="">
                 </td>
-                <td scope="row" style="padding: 4px;">
-                    <p><b>Subject for Exam</b> <br>
-                        {{#each subs}}
-                        {{this.name}}<br>
-                        {{/each}}</p>
+                <td class="hdr-center">
+                    <div class="school-name">S.D.M. Public High School</div>
+                    <div class="school-addr">M.S. Road, Morena</div>
                 </td>
-                <td scope="row" style="padding: 4px;">
-                    <p><b>Exam Date</b><br>
-                        {{#each subs}}
-                        {{this.examDate}}<br>
-                        {{/each}}</p>
-                </td>
+                <td class="hdr-spacer"></td>
             </tr>
-            <tr>
-                <td colspan="3"  style="line-height: 40%;">1. Students have to come with their pencil box only.</td>
-            </tr>
-            <tr>
-                <td colspan="3" style="line-height: 40%;">2. Leave for preparation will be on 7<sup>th</sup> of March 2026.</td>
-            </tr>
-            <tr>
-                <td colspan="3" style="line-height: 40%;">3. Result will be declared on 28<sup>th</sup> of March 2026.</td>
-            </tr>
-            <tr>
-                <td colspan="3" style="line-height: 40%;">4. The School will repoen on 1<sup>th</sup> of April 2026.</td>
-                <!-- <td colspan="3" style="line-height: 15%;">4. School will remain closed on 16<sup>th</sup> & 17<sup>st</sup> September 2025.</td> -->
-            </tr>
-            <tr>
-                <th colspan="3" style="line-height: 300%;"> 
-                    <p  style="font-size: 1rem;"> <i>Class Teacher's Signature
-                            &nbsp&nbsp&nbsp&nbsp&nbsp
-                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                            &nbsp&nbsp&nbsp&nbsp&nbsp
-                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                            Principal's Signature</i></p>
-                </th>
-            </tr>
+        </table>
 
-        </tbody>
-    </table>
+        <!-- ── EXAM BANNER ── -->
+        <table class="banner-tbl" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="banner-time">Exam Time: 09:00 a.m – 11:30 a.m.</td>
+                <td class="banner-title">Annual Examination 2025-26</td>
+                <td class="banner-entry">ENTRY CARD</td>
+            </tr>
+        </table>
+
+        <!-- ── CLASS / ROLL / DOB ── -->
+        <table class="info-tbl" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Class</th>
+                    <th>Roll No.</th>
+                    <th>Date of Birth</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{../../course.displayName}}</td>
+                    <td></td>
+                    <td>{{this.DateOfBirth}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ── STUDENT INFO | SUBJECTS | DATES ── -->
+        <!-- height is the server-computed minimum; expands if needed but stays bounded -->
+        <table class="content-tbl" cellspacing="0" style="height:{{../../contentMinHeight}};">
+            <tr>
+                <td class="col-student">
+                    <div class="col-hdr">Student Details</div>
+                    <div><b>Name&nbsp;</b>: {{this.StudentName.FirstName}} {{this.StudentName.LastName}}</div>
+                    <div><b>Father</b>: {{this.FathersName}}</div>
+                    <div><b>Mother</b>: {{this.MothersName}}</div>
+                </td>
+                <td class="col-subjects" style="font-size:{{../../subjectFontSize}};line-height:{{../../subjectLineHeight}};">
+                    <div class="col-hdr">Subject for Exam</div>
+                    {{#each ../../subs}}<div>{{this.name}}</div>{{/each}}
+                </td>
+                <td class="col-dates" style="font-size:{{../../subjectFontSize}};line-height:{{../../subjectLineHeight}};">
+                    <div class="col-hdr">Exam Date</div>
+                    {{#each ../../subs}}<div>{{this.examDate}}</div>{{/each}}
+                </td>
+            </tr>
+        </table>
+
+        <!-- ── INSTRUCTIONS ── -->
+        <div class="instructions">
+            <div>1. Students have to come with their pencil box only.</div>
+            <div>2. Leave for preparation will be on 7<sup>th</sup> of March 2026.</div>
+            <div>3. Result will be declared on 28<sup>th</sup> of March 2026.</div>
+            <div>4. The School will reopen on 1<sup>st</sup> of April 2026.</div>
+        </div>
+
+        <!-- ── SIGNATURE ── -->
+        <table class="sig-tbl" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>Class Teacher's Signature</td>
+                <td class="sig-right">Principal's Signature</td>
+            </tr>
+        </table>
+
+    </div>
+    {{/each}}
+</div>
+{{/each}}
 </body>
 
 </html>

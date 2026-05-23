@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const moment = require('moment')
+const fs = require('fs')
+const path = require('path')
 const { Course } = require('../models/course')
 const { Student } = require('../models/student')
 const print = require('./print')
@@ -16,6 +18,39 @@ const {
   deleteAccessControl
 } = require('../helpers/auth')
 const { allow } = require('joi/lib/types/lazy')
+
+function deleteGeneratedFilesOnce(files) {
+  let hasCleaned = false
+
+  return () => {
+    if (hasCleaned) return
+    hasCleaned = true
+
+    files.forEach(file => {
+      if (!file || !file.filename) return
+
+      fs.unlink(file.filename, err => {
+        if (err && err.code !== 'ENOENT') {
+          console.error(`Unable to delete temp file: ${file.filename}`, err)
+        }
+      })
+    })
+  }
+}
+
+function buildZipDownloadList(files) {
+  return files.map(file => ({
+    path: file.filename,
+    name: path.basename(file.filename)
+  }))
+}
+
+function sendZipAndCleanup(res, files, zipName) {
+  const cleanup = deleteGeneratedFilesOnce(files)
+  res.once('finish', cleanup)
+  res.once('close', cleanup)
+  res.zip(buildZipDownloadList(files), zipName)
+}
 
 router.get(
   '/',
@@ -350,14 +385,11 @@ router.get(
       
     }
     course.subjects = course2
-    const x = await print.printAdmitCard(student, course)
-    let downloadArr = []
-    x.forEach(file => {
-      const filePath = file.filename.split('\/')
-      const fileName = filePath.pop()
-      downloadArr.push({ path: file.filename, name: fileName })
+    const [file] = await print.printAdmitCard(student, course)
+    const downloadName = `${course.displayName.replace(/[^a-zA-Z0-9]/g, '-')}-Admit-Cards.pdf`
+    res.download(file.filename, downloadName, () => {
+      fs.unlink(file.filename, () => {})
     })
-    res.zip(downloadArr, 'admitCard.zip')
   }
 )
 
@@ -382,12 +414,19 @@ router.get(
           el.class === course.displayName && el.examType === req.query.type[0]
       )
 
-      students[i].subjects =
-        students[i].academicDetails[findAcademicDetailsIndex].subjects
+      const academicDetail =
+        findAcademicDetailsIndex >= 0
+          ? students[i].academicDetails[findAcademicDetailsIndex]
+          : null
+
+      students[i].subjects = academicDetail && Array.isArray(academicDetail.subjects)
+        ? academicDetail.subjects
+        : []
       delete students[i].academicDetails
 
       students[i].subjects.forEach(subject => {
         const sub = course.subjects.find(el => el.name === subject.name)
+        if (!sub) return
         subject.maxMarks = sub.maxMarks
         subject.passingMarks = sub.passingMarks
         subject.markingType = sub.markingType
@@ -414,10 +453,11 @@ router.get(
       students[i].totalMaxMarks = totalMaxMarks
       students[i].totalMarksObtained = totalMarksObtained
       students[i].totalMarksObtainedWord = converter.toWords(totalMarksObtained)
-      students[i].percentage = (
-        (totalMarksObtained / totalMaxMarks) *
-        100
-      ).toFixed(2)
+      students[i].percentage =
+        totalMaxMarks > 0
+          ? ((totalMarksObtained / totalMaxMarks) * 100).toFixed(2)
+          : '0.00'
+      if (nSubs.length === 0) students[i].result = 'NA'
       nSubLen = nSubs.length > 6 ? nSubs.length : 6
       gSubLen = gSubs.length === 0 ? 0 : gSubs.length + 5
       delete students[i].subjects
@@ -432,13 +472,7 @@ router.get(
       dummyLenArr,
       req.query.type
     )
-    let downloadArr = []
-    x.forEach(file => {
-      const filePath = file.filename.split('/')
-      const fileName = filePath.pop()
-      downloadArr.push({ path: file.filename, name: fileName })
-    })
-    res.zip(downloadArr, 'marksheets.zip')
+    sendZipAndCleanup(res, x, 'marksheets.zip')
   }
 )
 
@@ -481,7 +515,7 @@ router.get(
       // })
       // let gSubs = []
       let {finalArr:nSubs, totalMarksObtained, grandTotalMaxMarks} = getFinalResult(findAcademicDetailsIndexes, numberSubs )
-console.log(nSubs, totalMarksObtained, grandTotalMaxMarks);
+      let gSubs = getFinalGradeResult(findAcademicDetailsIndexes)
       // let totalMarksObtained = 0
       // let totalMaxMarks = 0
       // students[i].result = 'PASS'
@@ -497,15 +531,16 @@ console.log(nSubs, totalMarksObtained, grandTotalMaxMarks);
       //   totalMaxMarks += sub.maxMarks
       // })
 
-      // students[i].gSubs = gSubs
+      students[i].gSubs = gSubs
       students[i].nSubs = nSubs
       students[i].totalMaxMarks = grandTotalMaxMarks
       students[i].totalMarksObtained = totalMarksObtained
       students[i].totalMarksObtainedWord = converter.toWords(totalMarksObtained)
-      students[i].percentage = (
-        (totalMarksObtained / grandTotalMaxMarks) *
-        100
-      ).toFixed(2)
+      students[i].percentage =
+        grandTotalMaxMarks > 0
+          ? ((totalMarksObtained / grandTotalMaxMarks) * 100).toFixed(2)
+          : '0.00'
+      students[i].result = getResultFromNumberSubjects(nSubs)
       nSubLen = nSubs.length > 6 ? nSubs.length : 6
       // gSubLen = gSubs.length === 0 ? 0 : gSubs.length + 5
       // delete students[i].subjects
@@ -524,13 +559,7 @@ console.log(nSubs, totalMarksObtained, grandTotalMaxMarks);
       dummyLenArr,
       req.query.type
     )
-    let downloadArr = []
-    x.forEach(file => {
-      const filePath = file.filename.split('/')
-      const fileName = filePath.pop()
-      downloadArr.push({ path: file.filename, name: fileName })
-    })
-    res.zip(downloadArr, 'marksheets.zip')
+    sendZipAndCleanup(res, x, 'marksheets.zip')
 
     // res.send();
 
@@ -573,6 +602,36 @@ function getFinalResult(academicDetailsForCurrentClass, numberSubs) {
     finalArr.push({name: sub, marks: totalMarks,maxMarks:totalMaxMarks , passingMarks:totalPassingMarks})
   })
 return {finalArr, totalMarksObtained, grandTotalMaxMarks};
+}
+
+function getFinalGradeResult(academicDetailsForCurrentClass) {
+  let allSubsArr = []
+  academicDetailsForCurrentClass.forEach(el => {
+    if (Array.isArray(el.subjects)) allSubsArr.push(...el.subjects)
+  })
+
+  const gradeSubs = allSubsArr.filter(el => el.markingType === 'Grade')
+  const uniqueMap = {}
+
+  gradeSubs.forEach(sub => {
+    if (!uniqueMap[sub.name]) uniqueMap[sub.name] = []
+    uniqueMap[sub.name].push(sub.marks)
+  })
+
+  return Object.keys(uniqueMap).map(name => ({
+    name,
+    marks: uniqueMap[name][uniqueMap[name].length - 1] || 'NA'
+  }))
+}
+
+function getResultFromNumberSubjects(numberSubjects) {
+  if (!Array.isArray(numberSubjects) || numberSubjects.length === 0) return 'NA'
+
+  for (const sub of numberSubjects) {
+    if (isNaN(sub.marks) || +sub.marks < +sub.passingMarks) return 'FAIL'
+  }
+
+  return 'PASS'
 }
 
 

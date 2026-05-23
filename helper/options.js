@@ -1,11 +1,11 @@
 module.exports = {
-    formate: 'A4',
+    format: 'A4',
     orientation: 'portrait',
     border: '12mm',
     timeout: '100000',
     childProcessOptions: {
         env: {
-          OPENSSL_CONF: '/dev/null',
+          OPENSSL_CONF: process.platform === 'win32' ? 'NUL' : '/dev/null',
         },
       }
     // header: {
