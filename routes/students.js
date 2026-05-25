@@ -25,42 +25,48 @@ router.get(
   [ensureAuthenticated, isAdmin, readAccessControl],
   async (req, res) => {
     const perPage = 50
-    const page = req.query.page || 1
-    const skip = perPage * page - perPage + 1
+    const page = parseInt(req.query.page) || 1
     const sort = req.query.sort || 'asc'
-    const tc = req.query.tc || false
+    const isPassout = req.query.tc === 'true'
 
-    const student = await Student.find({ TC: tc })
-      .skip(perPage * page - perPage)
-      .limit(perPage)
-      .sort({
-        CurrentClass: sort
-      })
-      .lean()
-    if (student.length > 0) {
-      const pages = await Student.countDocuments({ TC: tc })
+    let students, total
 
-      res.render('students/index', {
-        title: 'Students',
-        breadcrumbs: true,
-        search_bar: true,
-        students: student,
-        current: parseInt(page),
-        pages: Math.ceil(pages / perPage),
-        total: pages,
-        perPage: perPage,
-        skip: skip,
-        to: student.length + 10,
-        TC: !tc
+    if (isPassout) {
+      const all = await Student.find({ TC: true }).lean()
+      all.sort((a, b) => {
+        const da = moment(((a.RelievingDetails) || {}).TCDate, 'DD/MM/YYYY')
+        const db = moment(((b.RelievingDetails) || {}).TCDate, 'DD/MM/YYYY')
+        const va = da.isValid() ? da.valueOf() : 0
+        const vb = db.isValid() ? db.valueOf() : 0
+        return sort === 'desc' ? vb - va : va - vb
       })
+      total = all.length
+      students = all.slice((page - 1) * perPage, page * perPage)
     } else {
-      res.render('students/index', {
-        title: 'Students',
-        breadcrumbs: true,
-        search_bar: true,
-        TC: !tc
-      })
+      total = await Student.countDocuments({ TC: false })
+      students = await Student.find({ TC: false })
+        .skip((page - 1) * perPage)
+        .limit(perPage)
+        .sort({ CurrentClass: sort })
+        .lean()
     }
+
+    const pagePrefix = isPassout
+      ? `?tc=true&sort=${sort}&`
+      : `?sort=${sort}&`
+
+    res.render('students/index', {
+      title: 'Students',
+      breadcrumbs: true,
+      search_bar: true,
+      students,
+      current: page,
+      pages: Math.ceil(total / perPage) || 1,
+      total,
+      sort,
+      isPassout,
+      pagePrefix
+    })
   }
 )
 
