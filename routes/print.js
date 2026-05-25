@@ -186,61 +186,42 @@ module.exports = {
 
   printMarkSheet: async (students, course, dummyLenArr, examType) => {
     return new Promise((resolve, reject) => {
-      let i
-      let aa = []
+      if (!students || students.length === 0) return reject(new Error('No students'))
 
-
-
-      // for (i = 0; i < students.length; i++) {
-      students.forEach(async student => {
-
-
-        // console.log(renderedRows, generalRemarksMinHeight)
-
-
-
-        const nSubs = Array.isArray(student.nSubs) ? student.nSubs : []
-        const gSubs = Array.isArray(student.gSubs) ? student.gSubs : []
-        const hasNumberSubjects = nSubs.length > 0
-        const hasGradingSubjects = gSubs.length > 0
-        const isLongSheet = nSubs.length + gSubs.length > 12
-        const { renderedRows, generalRemarksMinHeight } = getGeneralRemarksHeightMm({
-          numberSubjectCount: nSubs.length,
-          gradeSubjectCount: gSubs.length,
-          hasGradingSubjects
-        })
-
-
-
-
-        const filePath = path.join(
-          __dirname,
-          'Mark-sheet',
-          `${student.AdmissionNumber}-${student.StudentName.FirstName}-${student.StudentName.LastName}-Mark-Sheet`
-        )
-        const document = {
-          html: markSheet,
-          data: {
-            student: student,
-            course: course,
-            nSubs: nSubs,
-            dummyLenArr: dummyLenArr,
-            hasNumberSubjects,
-            hasGradingSubjects,
-            isLongSheet,
-            numberOfRows: renderedRows,
-            generalRemarksMinHeight,
-            examType
-          },
-          path: filePath + '.pdf'
-        }
-        aa.push(pdf.create(document, options))
+      // All students in the same class share the same subject structure — compute layout once
+      const ref = students.find(s => Array.isArray(s.nSubs) && s.nSubs.length > 0) || students[0]
+      const nSubCount = Array.isArray(ref.nSubs) ? ref.nSubs.length : 0
+      const gSubCount = Array.isArray(ref.gSubs) ? ref.gSubs.length : 0
+      const hasNumberSubjects = nSubCount > 0
+      const hasGradingSubjects = gSubCount > 0
+      const isLongSheet = nSubCount + gSubCount > 12
+      const { generalRemarksMinHeight } = getGeneralRemarksHeightMm({
+        numberSubjectCount: nSubCount,
+        gradeSubjectCount: gSubCount,
+        hasGradingSubjects
       })
-      // }
-      Promise.all(aa).then(values => {
-        // console.log(values)
-        resolve(values)
-      })
+
+      const className = course.displayName.replace(/[^a-zA-Z0-9]/g, '-')
+      const dir = path.join(__dirname, 'Mark-sheet')
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+
+      const filePath = path.join(dir, `${className}-Mark-Sheets.pdf`)
+      const document = {
+        html: markSheet,
+        data: {
+          students,
+          course,
+          hasNumberSubjects,
+          hasGradingSubjects,
+          isLongSheet,
+          generalRemarksMinHeight,
+          examType
+        },
+        path: filePath
+      }
+      pdf.create(document, options)
+        .then(result => resolve([result]))
+        .catch(reject)
     })
   }
 

@@ -508,13 +508,9 @@ router.get(
     for (let i = 0; i < 22 - nSubLen - gSubLen; i++) {
       dummyLenArr.push(i)
     }
-    const x = await print.printMarkSheet(
-      students,
-      course,
-      dummyLenArr,
-      req.query.type
-    )
-    sendZipAndCleanup(res, x, 'marksheets.zip')
+    const [file] = await print.printMarkSheet(students, course, dummyLenArr, req.query.type)
+    const dlName = `${course.displayName.replace(/[^a-zA-Z0-9]/g, '-')}-Mark-Sheets.pdf`
+    res.download(file.filename, dlName, () => { fs.unlink(file.filename, () => {}) })
   }
 )
 
@@ -595,16 +591,9 @@ router.get(
 
 
 
-    const x = await print.printMarkSheet(
-      students,
-      course,
-      dummyLenArr,
-      req.query.type
-    )
-    sendZipAndCleanup(res, x, 'marksheets.zip')
-
-    // res.send();
-
+    const [file] = await print.printMarkSheet(students, course, dummyLenArr, req.query.type)
+    const dlName = `${course.displayName.replace(/[^a-zA-Z0-9]/g, '-')}-Mark-Sheets.pdf`
+    res.download(file.filename, dlName, () => { fs.unlink(file.filename, () => {}) })
   }
 )
 

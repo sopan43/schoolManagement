@@ -20,6 +20,10 @@
             color: #000;
         }
 
+        .page-break {
+            page-break-after: always;
+        }
+
         .doc {
             width: 100%;
             min-height: 273mm;
@@ -95,7 +99,6 @@
 
         .header-text {
             text-align: center;
-            /* balance left logo so title/address stay visually centered */
             padding-right: 150px;
         }
 
@@ -106,7 +109,7 @@
         }
 
         .remarks-box {
-            min-height: 46mm;
+            min-height: 11mm;
         }
 
         .content-block {
@@ -125,15 +128,6 @@
             display: flex;
             flex-direction: column;
             min-height: 0;
-        }
-
-        .general-remarks-box {
-            min-height: 42mm;
-            height: 100%;
-        }
-
-        .long-sheet .general-remarks-box {
-            min-height: 25mm;
         }
 
         .signature-row {
@@ -191,8 +185,9 @@
 </head>
 
 <body>
-    <div class="doc {{#if isLongSheet}}long-sheet{{/if}}"
-        style="--general-remarks-min-height: {{generalRemarksMinHeight}};">
+{{#each students}}
+<div class="doc {{#if ../isLongSheet}}long-sheet{{/if}}{{#unless @last}} page-break{{/unless}}">
+
     <table class="table" cellspacing="0" cellpadding="0">
         <tbody>
             <tr>
@@ -207,7 +202,7 @@
             </tr>
             <tr>
                 <th colspan="2">
-                    <p class="sub-title">{{examType}} Examination 2025-2026</p>
+                    <p class="sub-title">{{../examType}} Examination 2025-2026</p>
                 </th>
             </tr>
             <tr>
@@ -223,21 +218,20 @@
             <tr>
                 <td class="meta-cell" style="text-align:left">
                     <p>
-                        <b>Admission No. - {{student.AdmissionNumber}} </b><br>
-                        <b>Student's name - {{student.StudentName.FirstName}} {{student.StudentName.LastName}} </b><br>
-                        <b>Father's Name - {{student.FathersName}}</b><br>
-                        <b>Mother's Name - {{student.MothersName}}</b>
+                        <b>Admission No. - {{this.AdmissionNumber}} </b><br>
+                        <b>Student's name - {{this.StudentName.FirstName}} {{this.StudentName.LastName}} </b><br>
+                        <b>Father's Name - {{this.FathersName}}</b><br>
+                        <b>Mother's Name - {{this.MothersName}}</b>
                     </p>
                 </td>
                 <td class="meta-cell" style="text-align:right;">
                     <p>
-                        <b>Class - {{course.displayName}}</b><br>
+                        <b>Class - {{../course.displayName}}</b><br>
                         <b>Medium - English</b><br>
-                        <b>Date of Birth - {{student.DateOfBirth}} </b>
+                        <b>Date of Birth - {{this.DateOfBirth}} </b>
                     </p>
                 </td>
             </tr>
-
         </tbody>
     </table>
 
@@ -251,11 +245,10 @@
                 <th class="center-col" style="width: 11.5%">Min. Marks</th>
                 <th class="center-col" style="width: 17.2%">Marks Obtained</th>
                 <th style="width: 25.5%">Remarks</th>
-
             </tr>
         </thead>
         <tbody>
-            {{#if hasNumberSubjects}}
+            {{#if ../hasNumberSubjects}}
             {{#each nSubs}}
             <tr class="subject-row">
                 <td><b>{{this.name}}</b></td>
@@ -265,12 +258,12 @@
                 {{#if @first}}
                 <td rowspan="{{../nSubs.length}}" class="remarks-box">
                     <p style="margin: 0; line-height: 1.9;">
-                        Result <b>{{student.result}}</b><br>
-                        {{#ifCond student.result "==" 'PASS'}}   Percentage <b>{{student.percentage}}%</b><br> {{/ifCond}}
+                        Result <b>{{../result}}</b><br>
+                        {{#ifCond ../result "==" 'PASS'}}Percentage <b>{{../percentage}}%</b><br>{{/ifCond}}
                         <br>
                         Position
                         <br>
-                    </p>    
+                    </p>
                 </td>
                 {{/if}}
             </tr>
@@ -281,36 +274,29 @@
                 <td class="center-col">-</td>
                 <td class="center-col">-</td>
                 <td class="center-col">-</td>
-                <td class="center-col">Result <b>{{student.result}}</b></td>
+                <td class="center-col">Result <b>{{this.result}}</b></td>
             </tr>
             {{/if}}
             <tr class="fixed-row">
                 <th style="width: 34.3%">GRAND TOTAL</th>
-                <th style="width: 11.5%">{{student.totalMaxMarks}}</th>
+                <th style="width: 11.5%">{{this.totalMaxMarks}}</th>
                 <th style="width: 11.5%"></th>
-                <th style="width: 17.2%">{{student.totalMarksObtained}}</th>
+                <th style="width: 17.2%">{{this.totalMarksObtained}}</th>
                 <th style="width: 25.5%"></th>
-
             </tr>
             <tr class="fixed-row">
-                <td colspan="5"><b>Total in Words- {{student.totalMarksObtainedWord}}</b></td>
-
+                <td colspan="5"><b>Total in Words- {{this.totalMarksObtainedWord}}</b></td>
             </tr>
-            {{#if hasGradingSubjects}}
+            {{#if ../hasGradingSubjects}}
             <tr class="fixed-row">
                 <th colspan="5">GRADING SUBJECTS </th>
-
             </tr>
             <tr class="fixed-row">
                 <td>
-                    <p style=" margin: 0; line-height: 1.9;"><b>{{#each student.gSubs}}
-                        {{this.name}}<br>
-                        {{/each}}</b></p>
+                    <p style="margin: 0; line-height: 1.9;"><b>{{#each gSubs}}{{this.name}}<br>{{/each}}</b></p>
                 </td>
                 <td colspan="4">
-                    <p style=" margin: 0; line-height: 1.9;">{{#each student.gSubs}}
-                        {{this.marks}}<br>
-                        {{/each}}</p>
+                    <p style="margin: 0; line-height: 1.9;">{{#each gSubs}}{{this.marks}}<br>{{/each}}</p>
                 </td>
             </tr>
             {{/if}}
@@ -322,9 +308,7 @@
         <tbody>
             <tr class="fixed-row">
                 <th colspan="5" class="remarks-cell">GENERAL REMARKS -
-                    <!-- <div class="general-remarks-box"></div> -->
-                    <!-- <div class="general-remarks-box"></div> -->
-                     <div ><br><br><br><br></div>
+                    <div style="min-height: {{../generalRemarksMinHeight}};"></div>
                     <div class="signature-wrap">
                         <table class="signature-row">
                             <tr>
@@ -340,7 +324,9 @@
     </table>
     </div>
     </div>
-    </div>
+
+</div>
+{{/each}}
 </body>
 
 </html>
