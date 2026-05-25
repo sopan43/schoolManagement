@@ -29,7 +29,8 @@ const courseSchema = new mongoose.Schema({
         type: String
       }
     }
-  ]
+  ],
+  instructions: [{ type: String }]
 })
 
 const Course = mongoose.model('Course', courseSchema)

@@ -20,12 +20,12 @@
 
         /* ── Header ── */
         .hdr-tbl  { width: 100%; border-collapse: collapse; margin-bottom: 1.5mm; }
-        .hdr-logo { width: 74px; }
-        .hdr-logo img { width: 74px; height: 74px; }
+        .hdr-logo { width: 100px; }
+        .hdr-logo img { width: 100px; height: 100px; }
         .hdr-center { text-align: center; vertical-align: middle; }
-        .school-name { font-size: 22px; font-weight: 900; line-height: 1.15; }
-        .school-addr { font-size: 14px; margin-top: 2px; }
-        .hdr-spacer { width: 74px; }
+        .school-name { font-size: 34px; font-weight: 900; line-height: 1.15; }
+        .school-addr { font-size: 18px; margin-top: 3px; }
+        .hdr-spacer { width: 100px; }
 
         /* ── Exam banner ── */
         .banner-tbl {
@@ -80,11 +80,11 @@
         <table class="hdr-tbl" cellspacing="0" cellpadding="0">
             <tr>
                 <td class="hdr-logo" valign="middle">
-                    <img src="https://res.cloudinary.com/tsp/image/upload/v1664338574/sampleImage.png" alt="">
+                    <img src="{{../../settings.logoUrl}}" alt="">
                 </td>
                 <td class="hdr-center">
-                    <div class="school-name">S.D.M. Public High School</div>
-                    <div class="school-addr">M.S. Road, Morena</div>
+                    <div class="school-name">{{../../settings.schoolName}}</div>
+                    <div class="school-addr">{{../../settings.schoolAddress}}</div>
                 </td>
                 <td class="hdr-spacer"></td>
             </tr>
@@ -93,8 +93,8 @@
         <!-- ── EXAM BANNER ── -->
         <table class="banner-tbl" cellspacing="0" cellpadding="0">
             <tr>
-                <td class="banner-time">Exam Time: 09:00 a.m – 11:30 a.m.</td>
-                <td class="banner-title">Annual Examination 2025-26</td>
+                <td class="banner-time">Exam Time: {{../../settings.examTime}}</td>
+                <td class="banner-title">{{../../settings.examTitle}}</td>
                 <td class="banner-entry">ENTRY CARD</td>
             </tr>
         </table>
@@ -140,10 +140,7 @@
 
         <!-- ── INSTRUCTIONS ── -->
         <div class="instructions">
-            <div>1. Students have to come with their pencil box only.</div>
-            <div>2. Leave for preparation will be on 7<sup>th</sup> of March 2026.</div>
-            <div>3. Result will be declared on 28<sup>th</sup> of March 2026.</div>
-            <div>4. The School will reopen on 1<sup>st</sup> of April 2026.</div>
+            {{#each ../../settings.numberedInstructions}}<div>{{num}}. {{text}}</div>{{/each}}
         </div>
 
         <!-- ── SIGNATURE ── -->

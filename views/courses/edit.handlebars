@@ -1,215 +1,200 @@
 <div class="container-fluid" id="container-fluid">
-    <br><br>
-    <div class="row">
-        <div class="col-4">
-            <form action="/courses/{{course._id}}?_method=PUT" method="POST" class="form-edit-course needs-validation"
-                novalidate>
-                <input type="hidden" name="_method" value="PUT">
-                <h4>Edit Course</h4>
-                <hr>
-                {{#each course.subjects}}
-                <h2>{{name}}</h2>
-                <div class="col" style="text-align: right;">
-                    <div class="dropdown" id="customized-dropdown">
-                        <button type="button" class="btn btn-default" data-toggle="dropdown">
-                            <i class="fa fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right animated fadeIn">
-                            <li class="view-item">
-                                <a class="dropdown-item"
-                                    href="/courses/report?id={{../course._id}}&type=Quarterly&subject={{name}}">
-                                    Quarterly
-                                </a>
-                            </li>
-                            <li class="view-item">
-                                <a class="dropdown-item"
-                                    href="/courses/report?id={{../course._id}}&type=Halfyearly&subject={{name}}">
-                                    Half yearly
-                                </a>
-                            </li>
-                            <li class="view-item">
-                                <a class="dropdown-item"
-                                    href="/courses/report?id={{../course._id}}&type=Annually&subject={{name}}">
-                                    Annually
-                                </a>
-                            </li>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="name">Subject Name</label>
-                            <input type="text" name="name" class="form-control" value="{{name}}"
-                                placeholder="Course Name" required>
-                        </div>
-                        {{examDate}}
-                        <div class="form-group col-md-6">
-                            <label for="examDate">Exam Date </label>
-                            <input  type="date" value="{{examDate}}" class="form-control" name="examDate"
-                                placeholder=" Month/ Date/ Year" data-type="datepicker">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="Class">Select Marking Type( <span>*</span> )</label>
-                            <select name="markingType" class="form-control custom-select" required>
-                                {{#select markingType}}
-                                <option value="">Choose...</option>
-                                <option value="Number">Number</option>
-                                <option value="Grade">Grade</option>
-                                {{/select}}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="passingMarks">Passing Marks</label>
-                            <input type="text" id="passingMarks" class="form-control" value="{{passingMarks}}"
-                                name="passingMarks" required>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="maxMarks">Max Marks</label>
-                            <input type="text" id="maxMarks" class="form-control" value="{{maxMarks}}" name="maxMarks"
-                                required>
-                        </div>
+<br>
 
-                    </div>
-                </div>
-                <hr>
-                {{/each}}
-                <button type="submit" class="btn btn-default btn-lg btn-block">Update &nbsp;&nbsp;
-                    <i class="fa fa-pencil fa-lg"></i>
-                </button>
-            </form>
-
-        </div>
-        <div class="col-8" style="margin-top: -50px;">
-            <div>
-                <div class="row">
-                    <div class="col">
-                        <h2 style="text-align: left;">Students - {{course.displayName}}
-                        </h2>
-                    </div>
-                    <div class="col">
-                        <a href="/courses/admitcard?id={{course._id}}"><button type="button" class="btn btn-info"
-                                style="width:100%"><i class="fa fa-exchange fa-lg"></i>&nbsp;Admit Cards</button></a>
-                        <div class="col" style="text-align: right;">
-                            Report Card
-                            <div class="dropdown" id="customized-dropdown">
-                                <button type="button" class="btn btn-default" data-toggle="dropdown">
-                                    <i class="fa fa-ellipsis-v"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right animated fadeIn">
-                                    <li class="view-item">
-                                        <a class="dropdown-item"
-                                            href="/courses/reportcard?id={{course._id}}&type=Quarterly">
-                                            Quarterly
-                                        </a>
-                                    </li>
-                                    <li class="view-item">
-                                        <a class="dropdown-item"
-                                            href="/courses/reportcard?id={{course._id}}&type=Halfyearly">
-                                            Half yearly
-                                        </a>
-                                    </li>
-                                    <li class="view-item">
-                                        <a class="dropdown-item"
-                                            href="/courses/reportcard?id={{course._id}}&type=Annual">
-                                            Annual
-                                        </a>
-                                    </li>
-                                    <li class="view-item">
-                                        <a class="dropdown-item"
-                                            href="/courses/reportcardFinal?id={{course._id}}&type=Final">
-                                            Final
-                                        </a>
-                                    </li>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">{{course.displayName}}</h4>
+    <div>
+        <a href="/courses/examcalendar" class="btn btn-outline-secondary btn-sm mr-1">
+            <i class="fa fa-calendar"></i> Exam Calendar
+        </a>
+        <a href="/courses/admitsettings" class="btn btn-outline-secondary btn-sm mr-1">
+            <i class="fa fa-cog"></i> Card Settings
+        </a>
+        <a href="/courses/admitcard?id={{course._id}}" class="btn btn-info btn-sm mr-1">
+            <i class="fa fa-download"></i> Admit Cards
+        </a>
+        <div class="dropdown d-inline-block">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-file-text"></i> Report Card
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="/courses/reportcard?id={{course._id}}&type=Quarterly">Quarterly</a>
+                <a class="dropdown-item" href="/courses/reportcard?id={{course._id}}&type=Halfyearly">Half Yearly</a>
+                <a class="dropdown-item" href="/courses/reportcard?id={{course._id}}&type=Annual">Annual</a>
+                <a class="dropdown-item" href="/courses/reportcardFinal?id={{course._id}}&type=Final">Final</a>
             </div>
-            {{#if students}}
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Gender</th>
-                        <th scope="col">Date Of Birth</th>
-                        <th scope="col">Fathers Name</th>
-                        <th scope="col">Mothers Name</th>
-                        <th scope="col">Phone Number</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
+        </div>
+    </div>
+</div>
 
-                    {{#each students}}
-                    <tr>
-                        <td>{{StudentName.FirstName}}&nbsp;{{StudentName.LastName}}</td>
-                        <td>{{Gender}}</td>
-                        <td>{{DateOfBirth}}</td>
-                        <td>{{FathersName}}</td>
-                        <td>{{MothersName}}</td>
-                        <td>{{PhoneNumber}}</td>
-                        <td>
-                    <div class="dropdown" id="customized-dropdown">
-                        <button type="button" class="btn btn-default" data-toggle="dropdown">
-                            <i class="fa fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right animated fadeIn">
-                            <li class="view-item">
-                                <a class="dropdown-item" href="/students/edit?id={{_id}}">
-                                    Edit
-                                </a>
-                            </li>
-                            <li class="view-item">
-                                <a class="dropdown-item" href="/students/details?id={{_id}}">
-                                    View
-                                </a>
-                            </li>
-                            <li class="view-item">
-                                <a href="#" class="dropdown-item" onclick="deleteItem('/students/{{_id}}');">Delete</a>
-                            </li>
-                        </div>
+<div class="row">
+
+    <!-- Left: Config + Exam Schedule -->
+    <div class="col-lg-5 col-md-6">
+
+        <!-- Subject Configuration -->
+        <div class="card mb-3">
+            <div class="card-header py-2"><strong>Subject Configuration</strong></div>
+            <div class="card-body p-2">
+                <form action="/courses/{{course._id}}?_method=PUT" method="POST" class="needs-validation" novalidate>
+                    <input type="hidden" name="_method" value="PUT">
+                    <table class="table table-sm table-bordered mb-2">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Subject</th>
+                                <th>Type</th>
+                                <th>Max</th>
+                                <th>Pass</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each course.subjects}}
+                            <tr>
+                                <td><input type="text" name="name" class="form-control form-control-sm" value="{{name}}" required></td>
+                                <td>
+                                    <select name="markingType" class="form-control form-control-sm custom-select" required>
+                                        {{#select markingType}}
+                                        <option value="">--</option>
+                                        <option value="Number">Num</option>
+                                        <option value="Grade">Grade</option>
+                                        {{/select}}
+                                    </select>
+                                </td>
+                                <td><input type="number" name="maxMarks" class="form-control form-control-sm" value="{{maxMarks}}"></td>
+                                <td><input type="number" name="passingMarks" class="form-control form-control-sm" value="{{passingMarks}}"></td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">Save Configuration</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Exam Schedule -->
+        <div class="card">
+            <div class="card-header py-2"><strong>Exam Schedule</strong></div>
+            <div class="card-body p-2">
+                <form action="/courses/{{course._id}}/examdates?_method=PUT" method="POST">
+                    <input type="hidden" name="_method" value="PUT">
+                    <table class="table table-sm table-bordered mb-2">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Subject</th>
+                                <th>Exam Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each course.subjects}}
+                            <tr>
+                                <td><strong>{{name}}</strong></td>
+                                <td><input type="date" name="examDate" class="form-control form-control-sm" value="{{formatDateInput examDate}}"></td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                    <div class="form-group mt-2 mb-2">
+                        <label class="mb-1"><strong>Admit Card Instructions</strong> <small class="text-muted">(one per line; leave blank to use global default)</small></label>
+                        <textarea name="instructions" class="form-control form-control-sm" rows="4" placeholder="e.g. Students must bring their admit card.">{{courseInstructionsText}}</textarea>
                     </div>
-                </td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
+                    <button type="submit" class="btn btn-success btn-sm btn-block">Save Exam Dates</button>
+                </form>
+            </div>
+        </div>
 
-            {{#unless user.privileges.update}}
-            <script>
-                let updateItems = document.getElementsByClassName('edit-item'), count;
+    </div>
 
-                for (count = 0; count < updateItems.length; count++) {
-                    updateItems[count].style.display = 'none';
-                }
-            </script>
-            {{/unless}}
+    <!-- Right: Mark Entry + Students -->
+    <div class="col-lg-7 col-md-6">
 
-            {{#unless user.privileges.delete}}
-            <script>
-                let items = document.getElementsByClassName("del-item"), i;
+        <!-- Enter Marks -->
+        <div class="card mb-3">
+            <div class="card-header py-2"><strong>Enter Marks</strong></div>
+            <div class="card-body p-2">
+                <table class="table table-sm table-bordered mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Subject</th>
+                            <th class="text-center">Quarterly</th>
+                            <th class="text-center">Half Yearly</th>
+                            <th class="text-center">Annual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each course.subjects}}
+                        <tr>
+                            <td>{{name}}</td>
+                            <td class="text-center">
+                                <a href="/courses/report?id={{../course._id}}&type=Quarterly&subject={{name}}" class="btn btn-outline-primary btn-sm">Enter</a>
+                            </td>
+                            <td class="text-center">
+                                <a href="/courses/report?id={{../course._id}}&type=Halfyearly&subject={{name}}" class="btn btn-outline-primary btn-sm">Enter</a>
+                            </td>
+                            <td class="text-center">
+                                <a href="/courses/report?id={{../course._id}}&type=Annually&subject={{name}}" class="btn btn-outline-primary btn-sm">Enter</a>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-                for (i = 0; i < items.length; i++) {
-                    items[i].style.display = 'none';
-                }
-            </script>
-            {{/unless}}
-
-            <br>
-
-            <ul class="pagination">
-                {{#paginate current=current pages=pages}} {{/paginate}}
-            </ul>
-            {{else}}
-            <p>No records found...</p>
-            {{/if}}
+        <!-- Students -->
+        <div class="card">
+            <div class="card-header py-2"><strong>Students</strong></div>
+            <div class="card-body p-2">
+                {{#if students}}
+                <table class="table table-sm table-striped mb-0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>DOB</th>
+                            <th>Father</th>
+                            <th>Phone</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each students}}
+                        <tr>
+                            <td>{{StudentName.FirstName}} {{StudentName.LastName}}</td>
+                            <td>{{Gender}}</td>
+                            <td>{{DateOfBirth}}</td>
+                            <td>{{FathersName}}</td>
+                            <td>{{PhoneNumber}}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown"></button>
+                                    <div class="dropdown-menu dropdown-menu-right animated fadeIn">
+                                        <a class="dropdown-item edit-item" href="/students/edit?id={{_id}}">Edit</a>
+                                        <a class="dropdown-item" href="/students/details?id={{_id}}">View</a>
+                                        <a href="#" class="dropdown-item del-item" onclick="deleteItem('/students/{{_id}}');">Delete</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                {{else}}
+                <p class="text-muted mb-0">No students enrolled.</p>
+                {{/if}}
+            </div>
         </div>
 
     </div>
 </div>
+</div>
+
+{{#unless user.privileges.update}}
+<script>
+    document.querySelectorAll('.edit-item').forEach(function(el) { el.style.display = 'none'; });
+</script>
+{{/unless}}
+{{#unless user.privileges.delete}}
+<script>
+    document.querySelectorAll('.del-item').forEach(function(el) { el.style.display = 'none'; });
+</script>
+{{/unless}}

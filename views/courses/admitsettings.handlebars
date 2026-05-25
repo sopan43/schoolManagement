@@ -1,0 +1,74 @@
+<div class="container-fluid" id="container-fluid">
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="mb-0">Admit Card Settings</h4>
+        <small class="text-muted">These values are printed on every admit card.</small>
+    </div>
+    <a href="/courses" class="btn btn-outline-secondary btn-sm">
+        <i class="fa fa-arrow-left"></i> Back to Courses
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form action="/courses/admitsettings" method="POST">
+                    <div class="form-group">
+                        <label>School Name</label>
+                        <input type="text" name="schoolName" class="form-control" value="{{settings.schoolName}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>School Address</label>
+                        <input type="text" name="schoolAddress" class="form-control" value="{{settings.schoolAddress}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Logo URL</label>
+                        <input type="text" name="logoUrl" class="form-control" value="{{settings.logoUrl}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Exam Title</label>
+                        <input type="text" name="examTitle" class="form-control" value="{{settings.examTitle}}" placeholder="e.g. Annual Examination 2025-26">
+                    </div>
+                    <div class="form-group">
+                        <label>Exam Time</label>
+                        <input type="text" name="examTime" class="form-control" value="{{settings.examTime}}" placeholder="e.g. 09:00 a.m – 11:30 a.m.">
+                    </div>
+                    <div class="form-group">
+                        <label>Instructions <small class="text-muted">(one per line)</small></label>
+                        <textarea name="instructions" class="form-control" rows="5" placeholder="Students must bring their admit card.">{{settings.instructionsText}}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Save Settings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header py-2"><strong>Preview</strong></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">School</dt>
+                    <dd class="col-sm-8">{{settings.schoolName}}</dd>
+                    <dt class="col-sm-4">Address</dt>
+                    <dd class="col-sm-8">{{settings.schoolAddress}}</dd>
+                    <dt class="col-sm-4">Exam</dt>
+                    <dd class="col-sm-8">{{settings.examTitle}}</dd>
+                    <dt class="col-sm-4">Time</dt>
+                    <dd class="col-sm-8">{{settings.examTime}}</dd>
+                </dl>
+                {{#if settings.instructions.length}}
+                <hr>
+                <small><strong>Instructions</strong></small>
+                <ol class="pl-3 mb-0 small">
+                    {{#each settings.instructions}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ol>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+</div>

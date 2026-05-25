@@ -17,7 +17,29 @@ const {
   updateAccessControl,
   deleteAccessControl
 } = require('../helpers/auth')
-const { allow } = require('joi/lib/types/lazy')
+
+const settingsPath = path.join(__dirname, '..', 'data', 'examSettings.json')
+
+function loadSettings() {
+  const defaults = {
+    schoolName: 'S.D.M. Public High School',
+    schoolAddress: 'M.S. Road, Morena',
+    logoUrl: 'https://res.cloudinary.com/tsp/image/upload/v1664338574/sampleImage.png',
+    examTime: '09:00 a.m – 11:30 a.m.',
+    examTitle: 'Annual Examination 2025-26',
+    instructions: [
+      'Students have to come with their pencil box only.',
+      'Leave for preparation will be on 7th of March 2026.',
+      'Result will be declared on 28th of March 2026.',
+      'The School will reopen on 1st of April 2026.'
+    ]
+  }
+  try {
+    return Object.assign({}, defaults, JSON.parse(fs.readFileSync(settingsPath, 'utf8')))
+  } catch (e) {
+    return defaults
+  }
+}
 
 function deleteGeneratedFilesOnce(files) {
   let hasCleaned = false
@@ -184,9 +206,28 @@ router.get(
         title: 'Edit Course',
         breadcrumbs: true,
         course: course,
-        students: student
+        students: student,
+        courseInstructionsText: (course.instructions || []).join('\n')
       })
     }
+  }
+)
+
+router.put(
+  '/:id/examdates',
+  [ensureAuthenticated, isAdmin, updateAccessControl],
+  async (req, res) => {
+    const course = await Course.findOne({ _id: req.params.id }).lean()
+    const dates = [].concat(req.body.examDate || [])
+    const updatedSubjects = course.subjects.map((sub, i) => {
+      const raw = dates[i]
+      const formatted = raw ? moment(raw).format('LL') : ''
+      return Object.assign({}, sub, { examDate: formatted })
+    })
+    const instructions = (req.body.instructions || '').split('\n').map(s => s.trim()).filter(Boolean)
+    await Course.update({ _id: req.params.id }, { $set: { subjects: updatedSubjects, instructions } })
+    req.flash('success_msg', 'Exam schedule saved.')
+    res.redirect(`/courses/edit?id=${req.params.id}`)
   }
 )
 
@@ -194,28 +235,24 @@ router.put(
   '/:id',
   [ensureAuthenticated, isAdmin, updateAccessControl],
   async (req, res) => {
+    const existing = await Course.findOne({ _id: req.params.id }).lean()
+    const names = [].concat(req.body.name || [])
     let updateArr = []
-    for (let i = 0; i < req.body.name.length; i++) {
+    for (let i = 0; i < names.length; i++) {
       updateArr.push({
-        name: req.body.name[i],
+        name: names[i],
         passingMarks: req.body.passingMarks[i],
         maxMarks: req.body.maxMarks[i],
-        examDate: moment(req.body.examDate[i]).format('LL'),
+        examDate: existing && existing.subjects[i] ? existing.subjects[i].examDate : '',
         markingType: req.body.markingType[i]
       })
     }
     await Course.update(
-      {
-        _id: req.params.id
-      },
-      {
-        $set: {
-          subjects: updateArr
-        }
-      }
+      { _id: req.params.id },
+      { $set: { subjects: updateArr } }
     )
-    req.flash('success_msg', 'Course Updated Successfully.')
-    res.redirect('/courses')
+    req.flash('success_msg', 'Subject configuration saved.')
+    res.redirect(`/courses/edit?id=${req.params.id}`)
   }
 )
 
@@ -385,7 +422,12 @@ router.get(
       
     }
     course.subjects = course2
-    const [file] = await print.printAdmitCard(student, course)
+    const settings = loadSettings()
+    const activeInstructions = (course.instructions && course.instructions.length > 0)
+      ? course.instructions
+      : settings.instructions
+    settings.numberedInstructions = activeInstructions.map((text, i) => ({ num: i + 1, text }))
+    const [file] = await print.printAdmitCard(student, course, settings)
     const downloadName = `${course.displayName.replace(/[^a-zA-Z0-9]/g, '-')}-Admit-Cards.pdf`
     res.download(file.filename, downloadName, () => {
       fs.unlink(file.filename, () => {})
@@ -634,6 +676,69 @@ function getResultFromNumberSubjects(numberSubjects) {
   return 'PASS'
 }
 
+
+router.get(
+  '/examcalendar',
+  [ensureAuthenticated, isAdmin, readAccessControl],
+  async (req, res) => {
+    const courses = await Course.find().lean()
+    const schedule = []
+    courses.forEach(course => {
+      course.subjects.forEach(sub => {
+        if (sub.examDate && sub.examDate.trim() && sub.examDate !== 'Invalid date') {
+          schedule.push({
+            className: course.displayName,
+            courseId: course._id,
+            subject: sub.name,
+            examDate: sub.examDate,
+            sortKey: new Date(sub.examDate).valueOf() || 0
+          })
+        }
+      })
+    })
+    schedule.sort((a, b) => a.sortKey - b.sortKey)
+    res.render('courses/examcalendar', {
+      title: 'Exam Calendar',
+      breadcrumbs: true,
+      courses,
+      schedule
+    })
+  }
+)
+
+router.get(
+  '/admitsettings',
+  [ensureAuthenticated, isAdmin, updateAccessControl],
+  (req, res) => {
+    const settings = loadSettings()
+    settings.instructionsText = settings.instructions.join('\n')
+    res.render('courses/admitsettings', {
+      title: 'Admit Card Settings',
+      breadcrumbs: true,
+      settings
+    })
+  }
+)
+
+router.post(
+  '/admitsettings',
+  [ensureAuthenticated, isAdmin, updateAccessControl],
+  (req, res) => {
+    const settings = {
+      schoolName: req.body.schoolName || '',
+      schoolAddress: req.body.schoolAddress || '',
+      logoUrl: req.body.logoUrl || '',
+      examTime: req.body.examTime || '',
+      examTitle: req.body.examTitle || '',
+      instructions: (req.body.instructions || '').split('\n').map(s => s.trim()).filter(Boolean)
+    }
+    const dataDir = path.join(__dirname, '..', 'data')
+    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true })
+    fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2))
+    req.flash('success_msg', 'Admit card settings saved.')
+    res.redirect('/courses/admitsettings')
+  }
+)
 
 // GET Courses AJAX
 router.get('/getCourses', (req, res) => {

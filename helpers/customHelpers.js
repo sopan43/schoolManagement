@@ -1,4 +1,11 @@
+const moment = require('moment')
+
 module.exports = {
+    formatDateInput: function (dateStr) {
+        if (!dateStr || dateStr.trim() === '' || dateStr === 'Invalid date') return ''
+        const m = moment(dateStr, 'LL')
+        return m.isValid() ? m.format('YYYY-MM-DD') : ''
+    },
     paginate: function (options) {
         let output = '';
 

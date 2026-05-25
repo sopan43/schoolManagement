@@ -134,7 +134,7 @@ module.exports = {
     })
   },
 
-  printAdmitCard: async (students, course) => {
+  printAdmitCard: async (students, course, settings) => {
     return new Promise((resolve, reject) => {
       // Fix: string comparison fails for "May 3" vs "May 27" — use Date objects
       course.subjects.sort((a, b) => new Date(a.examDate) - new Date(b.examDate))
@@ -173,7 +173,8 @@ module.exports = {
           subs: course.subjects,
           subjectFontSize,
           subjectLineHeight,
-          contentMinHeight
+          contentMinHeight,
+          settings: settings || {}
         },
         path: filePath
       }

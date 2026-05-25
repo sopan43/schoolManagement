@@ -55,7 +55,8 @@ const {
     paginate,
     select,
     if_eq,
-    select_course
+    select_course,
+    formatDateInput
 } = require('./helpers/customHelpers');
 
 const {
@@ -71,7 +72,8 @@ app.engine('handlebars', exphbs({
         paginate: paginate,
         select: select,
         if_eq: if_eq,
-        select_course: select_course
+        select_course: select_course,
+        formatDateInput: formatDateInput
     }
 }));
 
